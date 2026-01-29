@@ -361,14 +361,14 @@ export function TechPodcastsPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pb-6">
         {/* 头部 */}
-        <div className="mb-6 pt-6">
+        <div className="mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                技术播客精选
+                技术播客精选 - Tech Podcasts Selection
               </h1>
               <p className="text-gray-600 mt-2 text-sm sm:text-base">
-                精选 TED、技术演讲、播客片段，提升听力和理解能力
+                精选 Syntax、Software Engineering Daily 等优质技术演讲和播客片段，提升英语听力和技术理解能力
               </p>
             </div>
             <Button

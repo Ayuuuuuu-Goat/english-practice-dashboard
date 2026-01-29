@@ -334,14 +334,14 @@ export function IndustryReportsPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pb-6">
         {/* 头部 */}
-        <div className="mb-6 pt-6">
+        <div className="mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                行业报告阅读
+                行业报告阅读 - Industry Reports Reading
               </h1>
               <p className="text-gray-600 mt-2 text-sm sm:text-base">
-                每周精选优质行业报告，提升专业英语阅读能力
+                每周精选 TechCrunch、The Verge、MIT Tech Review 等优质科技和AI行业报告，提升专业英语阅读能力
               </p>
             </div>
             <Button

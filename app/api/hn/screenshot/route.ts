@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import puppeteer from 'puppeteer'
+import puppeteer from 'puppeteer-core'
+// @ts-ignore
+import chromium from '@sparticuz/chromium'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -19,16 +21,12 @@ export async function POST(request: NextRequest) {
 
     console.log(`开始截图: ${url}`)
 
-    // 启动浏览器
+    // 启动浏览器 - Vercel兼容配置
     browser = await puppeteer.launch({
-      headless: true,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-accelerated-2d-canvas',
-        '--disable-gpu',
-      ],
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
     })
 
     const page = await browser.newPage()

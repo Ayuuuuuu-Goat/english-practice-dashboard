@@ -387,8 +387,8 @@ export function TechPodcastsPage() {
           {/* 左侧：播客列表 */}
           <div className="lg:col-span-4 xl:col-span-3">
             <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm overflow-hidden h-[400px] lg:h-[calc(100vh-200px)] flex flex-col">
-              <div className="p-4 border-b bg-gradient-to-r from-purple-50 to-pink-50 flex-shrink-0">
-                <h3 className="font-semibold flex items-center gap-2 text-gray-900">
+              <div className="p-4 border-b bg-gradient-to-r from-purple-50 to-pink-50 flex-shrink-0 h-[52px] flex items-center">
+                <h3 className="font-semibold flex items-center gap-2 text-gray-900 text-sm">
                   <Headphones className="h-4 w-4 text-purple-600" />
                   播客列表
                   <span className="text-xs text-gray-500 font-normal">({filteredPodcasts.length})</span>

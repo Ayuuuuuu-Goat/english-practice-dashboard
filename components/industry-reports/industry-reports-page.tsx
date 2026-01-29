@@ -412,7 +412,7 @@ export function IndustryReportsPage() {
           {selectedReport && (
             <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm overflow-hidden h-auto lg:h-[calc(100vh-200px)] flex flex-col">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-              <TabsList className="grid grid-cols-4 w-full flex-shrink-0 bg-gradient-to-r from-indigo-50 to-purple-50 border-0 p-1 rounded-none">
+              <TabsList className="grid grid-cols-4 w-full flex-shrink-0 bg-gradient-to-r from-indigo-50 to-purple-50 border-0 p-2 rounded-none h-[52px]">
                 <TabsTrigger value="reading" className="flex items-center gap-2">
                   <BookOpen className="h-4 w-4" />
                   阅读

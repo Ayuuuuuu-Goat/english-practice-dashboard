@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Volume2, Check, Calendar, Trophy, Briefcase, Mail, Handshake, Users, Loader2 } from 'lucide-react'
+import { Volume2, Check, Calendar, Trophy, Briefcase, Mail, Handshake, Users, Loader2, Sparkles } from 'lucide-react'
 import { createClient } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { emailToUUID } from '@/lib/user-utils'
@@ -28,6 +28,7 @@ export function BusinessPhrasesPage() {
   const [learnedPhrases, setLearnedPhrases] = useState<Set<string>>(new Set())
   const [hasCheckedIn, setHasCheckedIn] = useState(false)
   const [recentCheckins, setRecentCheckins] = useState<any[]>([])
+  const [generating, setGenerating] = useState(false)
 
   useEffect(() => {
     loadPhrases()
@@ -118,6 +119,31 @@ export function BusinessPhrasesPage() {
     }
   }
 
+  const handleGeneratePhrases = async () => {
+    setGenerating(true)
+    toast.loading('正在AI生成新短语...', { id: 'generating' })
+
+    try {
+      const response = await fetch('/api/phrases/generate', {
+        method: 'POST'
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        toast.success(`成功生成 ${data.inserted} 个新短语！`, { id: 'generating' })
+        await loadPhrases()
+      } else {
+        toast.error('生成失败: ' + data.error, { id: 'generating' })
+      }
+    } catch (error) {
+      console.error('Error generating phrases:', error)
+      toast.error('生成失败', { id: 'generating' })
+    } finally {
+      setGenerating(false)
+    }
+  }
+
   const speakPhrase = (text: string) => {
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(text)
@@ -194,6 +220,24 @@ export function BusinessPhrasesPage() {
                 <div className="text-2xl font-bold text-amber-600">{learnedPhrases.size}</div>
                 <div className="text-xs text-gray-500">今日已学</div>
               </div>
+              <Button
+                onClick={handleGeneratePhrases}
+                disabled={generating}
+                variant="outline"
+                className="border-amber-200 hover:bg-amber-50"
+              >
+                {generating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    生成中...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    AI生成新短语
+                  </>
+                )}
+              </Button>
               <Button
                 onClick={handleCheckin}
                 disabled={hasCheckedIn || learnedPhrases.size === 0}

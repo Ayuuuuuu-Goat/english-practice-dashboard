@@ -52,6 +52,7 @@ export function IndustryReportsPage() {
   const [summaryText, setSummaryText] = useState('')
   const [answers, setAnswers] = useState<{ [key: string]: string }>({})
   const [showSampleAnswer, setShowSampleAnswer] = useState<string | null>(null)
+  const [fetching, setFetching] = useState(false)
 
   useEffect(() => {
     loadReports()
@@ -81,6 +82,31 @@ export function IndustryReportsPage() {
       toast.error('加载报告失败')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleFetchReports = async () => {
+    setFetching(true)
+    toast.loading('正在抓取最新报告...', { id: 'fetching' })
+
+    try {
+      const response = await fetch('/api/reports/fetch', {
+        method: 'POST'
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        toast.success(`成功抓取 ${data.count} 篇报告！`, { id: 'fetching' })
+        await loadReports()
+      } else {
+        toast.error('抓取失败: ' + data.error, { id: 'fetching' })
+      }
+    } catch (error) {
+      console.error('Error fetching reports:', error)
+      toast.error('抓取失败', { id: 'fetching' })
+    } finally {
+      setFetching(false)
     }
   }
 
@@ -315,6 +341,24 @@ export function IndustryReportsPage() {
           <p className="text-gray-600 mt-2 text-base">
             每周精选优质行业报告，提升专业英语阅读能力
           </p>
+        </div>
+        <Button
+          onClick={handleFetchReports}
+          disabled={fetching}
+          className="flex items-center gap-2"
+        >
+          {fetching ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              抓取中...
+            </>
+          ) : (
+            <>
+              <TrendingUp className="h-4 w-4" />
+              抓取最新报告
+            </>
+          )}
+        </Button>
         </div>
       </div>
 

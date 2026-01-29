@@ -358,41 +358,46 @@ export function TechPodcastsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* 头部 */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-            技术播客精选
-          </h2>
-          <p className="text-gray-600 mt-2 text-base">
-            精选 TED、技术演讲、播客片段，提升听力和理解能力
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* 头部 */}
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                技术播客精选
+              </h1>
+              <p className="text-gray-600 mt-2 text-sm sm:text-base">
+                精选 TED、技术演讲、播客片段，提升听力和理解能力
+              </p>
+            </div>
+            <Button
+              onClick={initializePodcasts}
+              variant="outline"
+              className="flex items-center gap-2 bg-white hover:bg-purple-50 border-purple-200 shadow-lg hover:shadow-xl transition-all duration-200 self-start sm:self-auto"
+              disabled={loading}
+            >
+              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              刷新播客
+            </Button>
+          </div>
         </div>
-        <Button
-          onClick={initializePodcasts}
-          variant="outline"
-          className="flex items-center gap-2"
-          disabled={loading}
-        >
-          <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-          刷新播客
-        </Button>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* 左侧：播客列表 */}
-        <div className="lg:col-span-1">
-          <Card className="p-4 h-[calc(100vh-240px)] flex flex-col">
-            <h3 className="font-semibold mb-4 flex items-center gap-2 flex-shrink-0">
-              <Headphones className="h-4 w-4" />
-              播客列表
-              <span className="text-xs text-gray-500 font-normal">({filteredPodcasts.length})</span>
-            </h3>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
+          {/* 左侧：播客列表 */}
+          <div className="lg:col-span-4 xl:col-span-3">
+            <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm overflow-hidden h-[400px] lg:h-[calc(100vh-200px)] flex flex-col">
+              <div className="p-4 sm:p-6 border-b bg-gradient-to-r from-purple-50 to-pink-50 flex-shrink-0">
+                <h3 className="font-semibold text-lg flex items-center gap-2 text-gray-900">
+                  <Headphones className="h-5 w-5 text-purple-600" />
+                  播客列表
+                  <span className="text-sm text-gray-500 font-normal">({filteredPodcasts.length})</span>
+                </h3>
+              </div>
 
-            {/* 时长筛选器 - 精简版 */}
-            {durationCounts['all'] > 0 && (
-              <div className="mb-4 pb-4 border-b border-gray-200 flex-shrink-0">
+              {/* 时长筛选器 - 精简版 */}
+              {durationCounts['all'] > 0 && (
+              <div className="p-3 sm:p-4 border-b flex-shrink-0">
                 <div className="flex items-center gap-2 mb-2">
                   <Clock className="h-3 w-3 text-gray-400" />
                   <span className="text-xs text-gray-500">时长</span>
@@ -424,26 +429,32 @@ export function TechPodcastsPage() {
               </div>
             )}
 
-            <div className="space-y-2 overflow-y-auto flex-1 pr-2">
+              <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2">
               {filteredPodcasts.map((podcast) => (
                 <button
                   key={podcast.id}
                   onClick={() => handleSelectPodcast(podcast)}
-                  className={`w-full text-left p-3 rounded-lg transition-all ${
+                  className={`w-full text-left p-3 sm:p-4 rounded-xl transition-all duration-200 group ${
                     selectedPodcast?.id === podcast.id
-                      ? 'bg-indigo-50 border-2 border-indigo-500'
-                      : 'bg-gray-50 hover:bg-gray-100 border-2 border-transparent'
+                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg scale-[1.02]'
+                      : 'bg-white hover:bg-gray-50 shadow-sm hover:shadow-md border border-gray-100'
                   }`}
                 >
                   <div className="flex items-start gap-2 mb-2">
                     {getCategoryBadge(podcast.category)}
                     {getDifficultyBadge(podcast.difficulty)}
                   </div>
-                  <p className="font-medium text-sm line-clamp-2 mb-2">
+                  <p className={`font-medium text-sm sm:text-base line-clamp-2 mb-2 ${
+                    selectedPodcast?.id === podcast.id ? 'text-white' : 'text-gray-900 group-hover:text-purple-600'
+                  }`}>
                     {podcast.title}
                   </p>
-                  <p className="text-xs text-gray-500 mb-1">{podcast.speaker}</p>
-                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <p className={`text-xs mb-1 ${
+                    selectedPodcast?.id === podcast.id ? 'text-purple-100' : 'text-gray-500'
+                  }`}>{podcast.speaker}</p>
+                  <div className={`flex items-center gap-2 text-xs ${
+                    selectedPodcast?.id === podcast.id ? 'text-purple-100' : 'text-gray-500'
+                  }`}>
                     <Clock className="h-3 w-3" />
                     {formatTime(podcast.duration_seconds)}
                   </div>
@@ -453,10 +464,10 @@ export function TechPodcastsPage() {
           </Card>
         </div>
 
-        {/* 右侧：播客内容 */}
-        <div className="lg:col-span-3">
+          {/* 右侧：播客内容 */}
+          <div className="lg:col-span-8 xl:col-span-9">
           {selectedPodcast && (
-            <div className="h-[calc(100vh-240px)] overflow-y-auto">
+            <div className="h-auto lg:h-[calc(100vh-200px)] overflow-y-auto">
               {/* 隐藏的音频元素 */}
               <audio
                 ref={audioRef}
@@ -464,7 +475,7 @@ export function TechPodcastsPage() {
                 preload="metadata"
               />
 
-              <Card className="p-8">
+              <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm p-6 sm:p-8">
                 <div className="space-y-6">
                   {/* 标题信息 */}
                   <div className="border-b border-gray-200 pb-6">
@@ -549,6 +560,7 @@ export function TechPodcastsPage() {
             </div>
           )}
         </div>
+      </div>
       </div>
     </div>
   )

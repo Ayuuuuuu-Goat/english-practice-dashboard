@@ -331,77 +331,87 @@ export function IndustryReportsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* 头部 */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-            行业报告阅读
-          </h2>
-          <p className="text-gray-600 mt-2 text-base">
-            每周精选优质行业报告，提升专业英语阅读能力
-          </p>
-        </div>
-        <Button
-          onClick={handleFetchReports}
-          disabled={fetching}
-          className="flex items-center gap-2"
-        >
-          {fetching ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              抓取中...
-            </>
-          ) : (
-            <>
-              <TrendingUp className="h-4 w-4" />
-              抓取最新报告
-            </>
-          )}
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* 左侧：报告列表 */}
-        <div className="lg:col-span-1">
-          <Card className="p-4 h-[calc(100vh-240px)] flex flex-col">
-            <h3 className="font-semibold mb-4 flex items-center gap-2 flex-shrink-0">
-              <FileText className="h-4 w-4" />
-              报告列表
-            </h3>
-            <div className="space-y-2 overflow-y-auto flex-1 pr-2">
-              {reports.map((report) => (
-                <button
-                  key={report.id}
-                  onClick={() => handleSelectReport(report)}
-                  className={`w-full text-left p-3 rounded-lg transition-all ${
-                    selectedReport?.id === report.id
-                      ? 'bg-indigo-50 border-2 border-indigo-500'
-                      : 'bg-gray-50 hover:bg-gray-100 border-2 border-transparent'
-                  }`}
-                >
-                  <div className="flex items-start gap-2 mb-2">
-                    {getCategoryBadge(report.category)}
-                    {getDifficultyBadge(report.difficulty)}
-                  </div>
-                  <p className="font-medium text-sm line-clamp-2 mb-2">
-                    {report.title}
-                  </p>
-                  <div className="flex items-center gap-2 text-xs text-gray-500">
-                    <Clock className="h-3 w-3" />
-                    {report.reading_time_minutes} 分钟
-                  </div>
-                </button>
-              ))}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* 头部 */}
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                行业报告阅读
+              </h1>
+              <p className="text-gray-600 mt-2 text-sm sm:text-base">
+                每周精选优质行业报告，提升专业英语阅读能力
+              </p>
             </div>
-          </Card>
+            <Button
+              onClick={handleFetchReports}
+              disabled={fetching}
+              className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200 self-start sm:self-auto"
+            >
+              {fetching ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  抓取中...
+                </>
+              ) : (
+                <>
+                  <TrendingUp className="h-4 w-4" />
+                  抓取最新报告
+                </>
+              )}
+            </Button>
+          </div>
         </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
+          {/* 左侧：报告列表 */}
+          <div className="lg:col-span-4 xl:col-span-3">
+            <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm overflow-hidden h-[400px] lg:h-[calc(100vh-200px)] flex flex-col">
+              <div className="p-4 sm:p-6 border-b bg-gradient-to-r from-indigo-50 to-purple-50 flex-shrink-0">
+                <h3 className="font-semibold text-lg flex items-center gap-2 text-gray-900">
+                  <FileText className="h-5 w-5 text-indigo-600" />
+                  报告列表
+                  <span className="text-sm text-gray-500 font-normal">({reports.length})</span>
+                </h3>
+              </div>
+              <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2">
+                {reports.map((report) => (
+                  <button
+                    key={report.id}
+                    onClick={() => handleSelectReport(report)}
+                    className={`w-full text-left p-3 sm:p-4 rounded-xl transition-all duration-200 group ${
+                      selectedReport?.id === report.id
+                        ? 'bg-gradient-to-r from-indigo-500 to-purple-500 shadow-lg scale-[1.02]'
+                        : 'bg-white hover:bg-gray-50 shadow-sm hover:shadow-md border border-gray-100'
+                    }`}
+                  >
+                    <div className="flex items-start gap-2 mb-2">
+                      {getCategoryBadge(report.category)}
+                      {getDifficultyBadge(report.difficulty)}
+                    </div>
+                    <p className={`font-medium text-sm sm:text-base line-clamp-2 mb-2 ${
+                      selectedReport?.id === report.id ? 'text-white' : 'text-gray-900 group-hover:text-indigo-600'
+                    }`}>
+                      {report.title}
+                    </p>
+                    <div className={`flex items-center gap-2 text-xs ${
+                      selectedReport?.id === report.id ? 'text-indigo-100' : 'text-gray-500'
+                    }`}>
+                      <Clock className="h-3 w-3" />
+                      {report.reading_time_minutes} 分钟
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </Card>
+          </div>
 
         {/* 右侧：报告内容 */}
-        <div className="lg:col-span-3">
+        <div className="lg:col-span-8 xl:col-span-9">
           {selectedReport && (
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="h-[calc(100vh-240px)] flex flex-col">
-              <TabsList className="grid grid-cols-4 w-full flex-shrink-0">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="h-auto lg:h-[calc(100vh-200px)] flex flex-col">
+              <TabsList className="grid grid-cols-4 w-full flex-shrink-0 bg-white/80 backdrop-blur-sm border-0 shadow-lg p-1.5 rounded-xl">
                 <TabsTrigger value="reading" className="flex items-center gap-2">
                   <BookOpen className="h-4 w-4" />
                   阅读
@@ -421,8 +431,8 @@ export function IndustryReportsPage() {
               </TabsList>
 
               {/* 阅读标签页 */}
-              <TabsContent value="reading" className="flex-1 overflow-y-auto mt-4">
-                <Card className="p-8 md:p-12">
+              <TabsContent value="reading" className="flex-1 overflow-y-auto mt-4 data-[state=active]:animate-in data-[state=active]:fade-in-50">
+                <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm p-6 sm:p-8 md:p-12">
                   <div className="space-y-8">
                     {/* 头部信息 */}
                     <div className="border-b border-gray-200 pb-6">
@@ -470,8 +480,8 @@ export function IndustryReportsPage() {
               </TabsContent>
 
               {/* 词汇标签页 */}
-              <TabsContent value="vocabulary" className="flex-1 overflow-y-auto mt-4">
-                <Card className="p-8">
+              <TabsContent value="vocabulary" className="flex-1 overflow-y-auto mt-4 data-[state=active]:animate-in data-[state=active]:fade-in-50">
+                <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm p-6 sm:p-8">
                   <div className="mb-6">
                     <h3 className="text-2xl font-bold text-gray-900">重点词汇讲解</h3>
                     <p className="text-sm text-gray-600 mt-2">
@@ -531,8 +541,8 @@ export function IndustryReportsPage() {
               </TabsContent>
 
               {/* 摘要标签页 */}
-              <TabsContent value="summary" className="flex-1 overflow-y-auto mt-4">
-                <Card className="p-8">
+              <TabsContent value="summary" className="flex-1 overflow-y-auto mt-4 data-[state=active]:animate-in data-[state=active]:fade-in-50">
+                <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm p-6 sm:p-8">
                   <div className="mb-6">
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">撰写英文摘要</h3>
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -605,8 +615,8 @@ Example structure:
               </TabsContent>
 
               {/* 讨论标签页 */}
-              <TabsContent value="discussion" className="flex-1 overflow-y-auto mt-4">
-                <Card className="p-8">
+              <TabsContent value="discussion" className="flex-1 overflow-y-auto mt-4 data-[state=active]:animate-in data-[state=active]:fade-in-50">
+                <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm p-6 sm:p-8">
                   <h3 className="text-2xl font-bold mb-6">讨论问题</h3>
                   <div className="space-y-8">
                     {questions.map((question, index) => (
@@ -691,6 +701,7 @@ Example structure:
             </Tabs>
           )}
         </div>
+      </div>
       </div>
     </div>
   )

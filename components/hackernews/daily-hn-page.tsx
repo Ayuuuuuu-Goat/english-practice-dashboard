@@ -50,8 +50,6 @@ export function DailyHNPage() {
   const [notes, setNotes] = useState('')
   const [userId, setUserId] = useState<string | null>(null)
   const [iframeError, setIframeError] = useState<Map<string, boolean>>(new Map())
-  const [screenshotLoading, setScreenshotLoading] = useState<Map<string, boolean>>(new Map())
-  const [screenshotUrl, setScreenshotUrl] = useState<Map<string, string>>(new Map())
   const [iframeLoading, setIframeLoading] = useState<Map<string, boolean>>(new Map())
 
   useEffect(() => {

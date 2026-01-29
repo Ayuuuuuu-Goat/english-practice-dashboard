@@ -21,13 +21,29 @@ export async function POST(request: NextRequest) {
 
     console.log(`开始截图: ${url}`)
 
-    // 启动浏览器 - Vercel兼容配置
-    browser = await puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
-      headless: chromium.headless,
-    })
+    // 检测是否在Vercel环境
+    const isVercel = process.env.VERCEL === '1'
+
+    // 启动浏览器
+    if (isVercel) {
+      // Vercel环境：使用chromium
+      browser = await puppeteer.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath('/var/task/node_modules/@sparticuz/chromium/bin'),
+        headless: chromium.headless,
+      })
+    } else {
+      // 本地开发环境：使用系统Chrome
+      browser = await puppeteer.launch({
+        headless: true,
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+        ],
+      })
+    }
 
     const page = await browser.newPage()
 

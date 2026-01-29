@@ -80,14 +80,11 @@ export function DailyHNPage() {
       const storyId = stories[currentIndex].id
       setIframeLoading(prev => new Map(prev).set(storyId, true))
 
-      // 设置超时：如果 10 秒后 iframe 还在加载，自动尝试截图
+      // 设置超时：如果 10 秒后 iframe 还在加载，标记为失败
       const timeout = setTimeout(() => {
-        if (iframeLoading.get(storyId) && !iframeError.get(storyId) && !screenshotUrl.get(storyId)) {
-          console.log('Iframe 加载超时，尝试截图')
-          const story = stories[currentIndex]
-          if (story.url || story.original_url) {
-            handleIframeError(storyId, story.url || story.original_url!)
-          }
+        if (iframeLoading.get(storyId) && !iframeError.get(storyId)) {
+          console.log('Iframe 加载超时')
+          handleIframeError(storyId)
         }
       }, 10000) // 10秒超时
 
@@ -95,49 +92,14 @@ export function DailyHNPage() {
     }
   }, [currentIndex, stories, readingRecords])
 
-  const handleIframeError = (storyId: string, url: string) => {
-    console.log(`Iframe 加载失败，尝试截图: ${url}`)
+  const handleIframeError = (storyId: string) => {
+    console.log('Iframe 加载失败')
     setIframeError(prev => new Map(prev).set(storyId, true))
-    // 自动触发截图
-    handleTakeScreenshot(storyId, url)
+    setIframeLoading(prev => new Map(prev).set(storyId, false))
   }
 
   const handleIframeLoad = (storyId: string) => {
     setIframeLoading(prev => new Map(prev).set(storyId, false))
-  }
-
-  const handleTakeScreenshot = async (storyId: string, url: string) => {
-    console.log(`开始截图: ${url}`)
-
-    setScreenshotLoading(prev => new Map(prev).set(storyId, true))
-
-    try {
-      const response = await fetch('/api/hn/screenshot', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url }),
-      })
-
-      if (response.ok) {
-        const blob = await response.blob()
-        const screenshotObjectUrl = URL.createObjectURL(blob)
-        setScreenshotUrl(prev => new Map(prev).set(storyId, screenshotObjectUrl))
-        setIframeError(prev => new Map(prev).set(storyId, true))
-        setScreenshotLoading(prev => new Map(prev).set(storyId, false))
-        toast.success('已生成页面截图')
-      } else {
-        toast.error('截图失败，请点击"在新窗口打开"查看原文')
-        setIframeError(prev => new Map(prev).set(storyId, true))
-      }
-    } catch (error) {
-      console.error('截图失败:', error)
-      toast.error('截图失败')
-      setIframeError(prev => new Map(prev).set(storyId, true))
-    } finally {
-      setScreenshotLoading(prev => new Map(prev).set(storyId, false))
-    }
   }
 
   useEffect(() => {
@@ -146,19 +108,19 @@ export function DailyHNPage() {
       const storyId = stories[currentIndex].id
       const url = stories[currentIndex].url || stories[currentIndex].original_url!
 
-      // 如果已经有截图或者已经标记失败，就不检测了
-      if (screenshotUrl.get(storyId) || iframeError.get(storyId)) {
+      // 如果已经标记失败，就不检测了
+      if (iframeError.get(storyId)) {
         return
       }
 
       const timer = setTimeout(() => {
-        console.log(`iframe 可能加载失败，提示用户截图: ${url}`)
-        // 不自动截图，而是显示提示
+        console.log(`iframe 可能加载失败: ${url}`)
+        // 不自动截图，让用户选择在新窗口打开
       }, 10000)
 
       return () => clearTimeout(timer)
     }
-  }, [currentIndex, stories, screenshotUrl, iframeError])
+  }, [currentIndex, stories, iframeError])
 
   const loadDailyStories = async () => {
     try {
@@ -400,15 +362,15 @@ export function DailyHNPage() {
                   </a>
                 </div>
                 <div className="flex items-center gap-3">
-                  {!screenshotUrl.get(currentStory.id) && (
+                  {(
                     <Button
-                      onClick={() => handleTakeScreenshot(currentStory.id, currentStory.url || currentStory.original_url!)}
-                      disabled={screenshotLoading.get(currentStory.id)}
+                      onClick={() => () => {}}
+                      disabled={false}
                       size="sm"
                       variant="outline"
                       className="rounded-xl text-xs"
                     >
-                      {screenshotLoading.get(currentStory.id) ? (
+                      {false ? (
                         <>
                           <Loader2 className="h-3 w-3 animate-spin mr-1" />
                           截图中...
@@ -429,26 +391,9 @@ export function DailyHNPage() {
                 </div>
               </div>
 
-              {/* 显示截图、加载状态或 iframe */}
-              {screenshotUrl.get(currentStory.id) ? (
-                // 显示截图
-                <div className="w-full overflow-auto" style={{ maxHeight: '800px' }}>
-                  <img
-                    src={screenshotUrl.get(currentStory.id)}
-                    alt="页面截图"
-                    className="w-full"
-                  />
-                </div>
-              ) : screenshotLoading.get(currentStory.id) ? (
-                // 截图加载中
-                <div className="w-full flex items-center justify-center" style={{ height: '400px' }}>
-                  <div className="text-center">
-                    <Loader2 className="h-8 w-8 animate-spin text-indigo-500 mx-auto mb-3" />
-                    <p className="text-gray-600">页面无法嵌入，正在生成截图...</p>
-                  </div>
-                </div>
-              ) : iframeError.get(currentStory.id) ? (
-                // iframe 加载失败且截图也失败
+              {/* 显示iframe或错误提示 */}
+              {iframeError.get(currentStory.id) ? (
+                // iframe 加载失败
                 <div className="w-full p-12 text-center">
                   <div className="max-w-md mx-auto">
                     <div className="mb-6">
@@ -459,25 +404,17 @@ export function DailyHNPage() {
                         页面无法嵌入显示
                       </h4>
                       <p className="text-gray-600 text-sm mb-4">
-                        该网站限制了页面嵌入功能，自动截图也未能成功
+                        该网站限制了页面嵌入功能
                       </p>
                     </div>
-                    <div className="space-y-3">
-                      <a
-                        href={currentStory.url || currentStory.original_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block px-6 py-3 bg-indigo-500 text-white rounded-2xl hover:bg-indigo-600 transition-colors font-semibold"
-                      >
-                        在新窗口打开阅读 →
-                      </a>
-                      <button
-                        onClick={() => handleTakeScreenshot(currentStory.id, currentStory.url || currentStory.original_url!)}
-                        className="block w-full px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-2xl hover:border-indigo-300 hover:bg-indigo-50 transition-colors font-medium"
-                      >
-                        📸 重试截图
-                      </button>
-                    </div>
+                    <a
+                      href={currentStory.url || currentStory.original_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block px-6 py-3 bg-indigo-500 text-white rounded-2xl hover:bg-indigo-600 transition-colors font-semibold"
+                    >
+                      在新窗口打开阅读 →
+                    </a>
                   </div>
                 </div>
               ) : (
@@ -499,7 +436,7 @@ export function DailyHNPage() {
                     sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
                     title="文章内容"
                     onLoad={() => handleIframeLoad(currentStory.id)}
-                    onError={() => handleIframeError(currentStory.id, currentStory.url || currentStory.original_url!)}
+                    onError={() => handleIframeError(currentStory.id)}
                   />
                 </div>
               )}

@@ -1,7 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import { LayoutDashboard, Users, TrendingUp, Calendar, Mic, BarChart3, Youtube, Newspaper, MessageSquare, LogOut, User, FileText, Headphones } from "lucide-react"
+import { LayoutDashboard, Users, TrendingUp, Calendar, Mic, BarChart3, Youtube, Newspaper, MessageSquare, LogOut, User, FileText, Headphones, Briefcase } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
@@ -23,6 +23,7 @@ const navItems = [
   { id: "video-learning", label: "每日视频", icon: Youtube },
   { id: "hn-reading", label: "HN AI 资讯", icon: Newspaper },
   { id: "ai-conversation", label: "AI 场景对话", icon: MessageSquare },
+  { id: "business-phrases", label: "每日商务短语", icon: Briefcase },
   { id: "industry-reports", label: "行业报告阅读", icon: FileText },
   { id: "tech-podcasts", label: "技术播客精选", icon: Headphones },
 ]

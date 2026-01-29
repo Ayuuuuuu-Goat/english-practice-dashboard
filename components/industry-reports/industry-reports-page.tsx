@@ -22,6 +22,8 @@ interface Report {
   week_number: number
   year: number
   content: string
+  source: string
+  source_url: string
 }
 
 interface Vocabulary {
@@ -444,10 +446,23 @@ export function IndustryReportsPage() {
                           {selectedReport.reading_time_minutes} 分钟阅读
                         </div>
                       </div>
-                      <h1 className="text-4xl font-bold mb-6 text-gray-900 leading-tight">
+                      <h1 className="text-4xl font-bold mb-4 text-gray-900 leading-tight">
                         {selectedReport.title}
                       </h1>
-                      <div className="bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded-r-lg">
+                      {selectedReport.source_url && (
+                        <a
+                          href={selectedReport.source_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-700 hover:underline mb-4"
+                        >
+                          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                          查看原文：{selectedReport.source}
+                        </a>
+                      )}
+                      <div className="bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded-r-lg mt-4">
                         <p className="text-base text-gray-700 leading-relaxed italic">
                           {selectedReport.summary}
                         </p>

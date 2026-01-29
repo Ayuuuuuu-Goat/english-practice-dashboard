@@ -383,8 +383,8 @@ export function TechPodcastsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* 左侧：播客列表 */}
         <div className="lg:col-span-1">
-          <Card className="p-4">
-            <h3 className="font-semibold mb-4 flex items-center gap-2">
+          <Card className="p-4 h-[calc(100vh-240px)] flex flex-col">
+            <h3 className="font-semibold mb-4 flex items-center gap-2 flex-shrink-0">
               <Headphones className="h-4 w-4" />
               播客列表
               <span className="text-xs text-gray-500 font-normal">({filteredPodcasts.length})</span>
@@ -392,7 +392,7 @@ export function TechPodcastsPage() {
 
             {/* 时长筛选器 - 精简版 */}
             {durationCounts['all'] > 0 && (
-              <div className="mb-4 pb-4 border-b border-gray-200">
+              <div className="mb-4 pb-4 border-b border-gray-200 flex-shrink-0">
                 <div className="flex items-center gap-2 mb-2">
                   <Clock className="h-3 w-3 text-gray-400" />
                   <span className="text-xs text-gray-500">时长</span>
@@ -424,7 +424,7 @@ export function TechPodcastsPage() {
               </div>
             )}
 
-            <div className="space-y-2">
+            <div className="space-y-2 overflow-y-auto flex-1 pr-2">
               {filteredPodcasts.map((podcast) => (
                 <button
                   key={podcast.id}
@@ -456,7 +456,7 @@ export function TechPodcastsPage() {
         {/* 右侧：播客内容 */}
         <div className="lg:col-span-3">
           {selectedPodcast && (
-            <>
+            <div className="h-[calc(100vh-240px)] overflow-y-auto">
               {/* 隐藏的音频元素 */}
               <audio
                 ref={audioRef}
@@ -546,7 +546,7 @@ export function TechPodcastsPage() {
                 </div>
                 <NavigationButtons />
               </Card>
-            </>
+            </div>
           )}
         </div>
       </div>

@@ -364,12 +364,12 @@ export function IndustryReportsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* 左侧：报告列表 */}
         <div className="lg:col-span-1">
-          <Card className="p-4">
-            <h3 className="font-semibold mb-4 flex items-center gap-2">
+          <Card className="p-4 h-[calc(100vh-240px)] flex flex-col">
+            <h3 className="font-semibold mb-4 flex items-center gap-2 flex-shrink-0">
               <FileText className="h-4 w-4" />
               报告列表
             </h3>
-            <div className="space-y-2">
+            <div className="space-y-2 overflow-y-auto flex-1 pr-2">
               {reports.map((report) => (
                 <button
                   key={report.id}
@@ -400,8 +400,8 @@ export function IndustryReportsPage() {
         {/* 右侧：报告内容 */}
         <div className="lg:col-span-3">
           {selectedReport && (
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid grid-cols-4 w-full">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="h-[calc(100vh-240px)] flex flex-col">
+              <TabsList className="grid grid-cols-4 w-full flex-shrink-0">
                 <TabsTrigger value="reading" className="flex items-center gap-2">
                   <BookOpen className="h-4 w-4" />
                   阅读
@@ -421,7 +421,7 @@ export function IndustryReportsPage() {
               </TabsList>
 
               {/* 阅读标签页 */}
-              <TabsContent value="reading">
+              <TabsContent value="reading" className="flex-1 overflow-y-auto mt-4">
                 <Card className="p-8 md:p-12">
                   <div className="space-y-8">
                     {/* 头部信息 */}
@@ -470,7 +470,7 @@ export function IndustryReportsPage() {
               </TabsContent>
 
               {/* 词汇标签页 */}
-              <TabsContent value="vocabulary">
+              <TabsContent value="vocabulary" className="flex-1 overflow-y-auto mt-4">
                 <Card className="p-8">
                   <div className="mb-6">
                     <h3 className="text-2xl font-bold text-gray-900">重点词汇讲解</h3>
@@ -531,7 +531,7 @@ export function IndustryReportsPage() {
               </TabsContent>
 
               {/* 摘要标签页 */}
-              <TabsContent value="summary">
+              <TabsContent value="summary" className="flex-1 overflow-y-auto mt-4">
                 <Card className="p-8">
                   <div className="mb-6">
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">撰写英文摘要</h3>
@@ -605,7 +605,7 @@ Example structure:
               </TabsContent>
 
               {/* 讨论标签页 */}
-              <TabsContent value="discussion">
+              <TabsContent value="discussion" className="flex-1 overflow-y-auto mt-4">
                 <Card className="p-8">
                   <h3 className="text-2xl font-bold mb-6">讨论问题</h3>
                   <div className="space-y-8">

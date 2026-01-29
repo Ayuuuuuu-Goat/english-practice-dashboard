@@ -7,6 +7,7 @@ import { PronunciationCombinedPage } from "@/components/pronunciation/pronunciat
 import { DailyVideoPage } from "@/components/video-learning/daily-video-page"
 import { DailyHNPage } from "@/components/hackernews/daily-hn-page"
 import { AIPoweredConversationPage } from "@/components/ai-conversation/ai-powered-conversation-page"
+import { BusinessPhrasesPage } from "@/components/business-phrases/business-phrases-page"
 import { IndustryReportsPage } from "@/components/industry-reports/industry-reports-page"
 import { TechPodcastsPage } from "@/components/tech-podcasts/tech-podcasts-page"
 
@@ -63,6 +64,8 @@ export default function DashboardPage() {
         return <DailyHNPage />
       case "ai-conversation":
         return <AIPoweredConversationPage />
+      case "business-phrases":
+        return <BusinessPhrasesPage />
       case "industry-reports":
         return <IndustryReportsPage />
       case "tech-podcasts":

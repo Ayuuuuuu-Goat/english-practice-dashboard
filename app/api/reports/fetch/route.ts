@@ -162,22 +162,69 @@ async function fetchArticlesFromRSS(): Promise<Article[]> {
 
 async function fetchArticleContent(url: string): Promise<string> {
   try {
-    const response = await fetch(url)
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      }
+    })
     const html = await response.text()
 
-    // Extract main content (simple version - could be improved)
-    const articleMatch = html.match(/<article[^>]*>([\s\S]*?)<\/article>/i)
-    if (articleMatch) {
-      let content = articleMatch[1]
-      // Remove HTML tags
-      content = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-      content = content.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
-      content = content.replace(/<[^>]+>/g, ' ')
-      content = content.replace(/\s+/g, ' ').trim()
-      return content.slice(0, 10000) // Limit length
+    // Try multiple selectors to find main content
+    const selectors = [
+      /<article[^>]*>([\s\S]*?)<\/article>/i,
+      /<main[^>]*>([\s\S]*?)<\/main>/i,
+      /<div[^>]*class="[^"]*post-content[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
+      /<div[^>]*class="[^"]*entry-content[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
+      /<div[^>]*class="[^"]*content[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
+    ]
+
+    let content = ''
+    for (const selector of selectors) {
+      const match = html.match(selector)
+      if (match && match[1]) {
+        content = match[1]
+        break
+      }
     }
-    return ''
+
+    if (!content) {
+      // Fallback: extract all paragraph text
+      const paragraphs = html.match(/<p[^>]*>([\s\S]*?)<\/p>/gi) || []
+      content = paragraphs.join(' ')
+    }
+
+    // Clean up content
+    content = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    content = content.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+    content = content.replace(/<nav\b[^<]*(?:(?!<\/nav>)<[^<]*)*<\/nav>/gi, '')
+    content = content.replace(/<footer\b[^<]*(?:(?!<\/footer>)<[^<]*)*<\/footer>/gi, '')
+    content = content.replace(/<header\b[^<]*(?:(?!<\/header>)<[^<]*)*<\/header>/gi, '')
+    content = content.replace(/<aside\b[^<]*(?:(?!<\/aside>)<[^<]*)*<\/aside>/gi, '')
+
+    // Convert common HTML entities
+    content = content.replace(/&nbsp;/g, ' ')
+    content = content.replace(/&quot;/g, '"')
+    content = content.replace(/&apos;/g, "'")
+    content = content.replace(/&lt;/g, '<')
+    content = content.replace(/&gt;/g, '>')
+    content = content.replace(/&amp;/g, '&')
+
+    // Remove all remaining HTML tags but preserve structure with newlines
+    content = content.replace(/<\/p>/gi, '\n\n')
+    content = content.replace(/<br[^>]*>/gi, '\n')
+    content = content.replace(/<\/h[1-6]>/gi, '\n\n')
+    content = content.replace(/<\/li>/gi, '\n')
+    content = content.replace(/<[^>]+>/g, '')
+
+    // Clean up whitespace
+    content = content.replace(/\n{3,}/g, '\n\n')
+    content = content.replace(/[ \t]+/g, ' ')
+    content = content.trim()
+
+    // Increase limit to 50000 characters (about 8000 words)
+    return content.slice(0, 50000)
   } catch (error) {
+    console.error('Error fetching article content:', error)
     return ''
   }
 }
@@ -185,7 +232,7 @@ async function fetchArticleContent(url: string): Promise<string> {
 async function enhanceArticle(article: Article) {
   // Use AI to enhance the article
   const prompt = `Analyze this article and provide:
-1. A clean markdown version of the content (preserve main points, remove ads/navigation)
+1. A clean, well-formatted markdown version of the COMPLETE content (preserve all main points, structure, and key details)
 2. A 2-sentence summary
 3. Reading difficulty (easy/medium/hard)
 4. Estimated reading time in minutes
@@ -193,7 +240,7 @@ async function enhanceArticle(article: Article) {
 6. 3 discussion questions
 
 Article Title: ${article.title}
-Content: ${article.content.slice(0, 8000)}
+Content: ${article.content.slice(0, 30000)}
 
 Respond in JSON format:
 {

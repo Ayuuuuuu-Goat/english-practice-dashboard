@@ -364,15 +364,15 @@ export function IndustryReportsPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 lg:items-start">
           {/* 左侧：报告列表 */}
           <div className="lg:col-span-4 xl:col-span-3">
             <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm overflow-hidden h-[400px] lg:h-[calc(100vh-200px)] flex flex-col">
-              <div className="p-4 sm:p-6 border-b bg-gradient-to-r from-indigo-50 to-purple-50 flex-shrink-0">
-                <h3 className="font-semibold text-lg flex items-center gap-2 text-gray-900">
-                  <FileText className="h-5 w-5 text-indigo-600" />
+              <div className="p-4 border-b bg-gradient-to-r from-indigo-50 to-purple-50 flex-shrink-0">
+                <h3 className="font-semibold flex items-center gap-2 text-gray-900">
+                  <FileText className="h-4 w-4 text-indigo-600" />
                   报告列表
-                  <span className="text-sm text-gray-500 font-normal">({reports.length})</span>
+                  <span className="text-xs text-gray-500 font-normal">({reports.length})</span>
                 </h3>
               </div>
               <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2">
@@ -410,8 +410,9 @@ export function IndustryReportsPage() {
         {/* 右侧：报告内容 */}
         <div className="lg:col-span-8 xl:col-span-9">
           {selectedReport && (
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="h-auto lg:h-[calc(100vh-200px)] flex flex-col">
-              <TabsList className="grid grid-cols-4 w-full flex-shrink-0 bg-white/80 backdrop-blur-sm border-0 shadow-lg p-1.5 rounded-xl">
+            <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm overflow-hidden h-auto lg:h-[calc(100vh-200px)] flex flex-col">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
+              <TabsList className="grid grid-cols-4 w-full flex-shrink-0 bg-gradient-to-r from-indigo-50 to-purple-50 border-0 p-1 rounded-none">
                 <TabsTrigger value="reading" className="flex items-center gap-2">
                   <BookOpen className="h-4 w-4" />
                   阅读
@@ -431,8 +432,7 @@ export function IndustryReportsPage() {
               </TabsList>
 
               {/* 阅读标签页 */}
-              <TabsContent value="reading" className="flex-1 overflow-y-auto mt-4 data-[state=active]:animate-in data-[state=active]:fade-in-50">
-                <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm p-6 sm:p-8 md:p-12">
+              <TabsContent value="reading" className="flex-1 overflow-y-auto m-0 p-6 sm:p-8 md:p-12 data-[state=active]:animate-in data-[state=active]:fade-in-50">
                   <div className="space-y-8">
                     {/* 头部信息 */}
                     <div className="border-b border-gray-200 pb-6">
@@ -476,12 +476,10 @@ export function IndustryReportsPage() {
                     </article>
                   </div>
                   <NavigationButtons />
-                </Card>
               </TabsContent>
 
               {/* 词汇标签页 */}
-              <TabsContent value="vocabulary" className="flex-1 overflow-y-auto mt-4 data-[state=active]:animate-in data-[state=active]:fade-in-50">
-                <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm p-6 sm:p-8">
+              <TabsContent value="vocabulary" className="flex-1 overflow-y-auto m-0 p-6 sm:p-8 data-[state=active]:animate-in data-[state=active]:fade-in-50">
                   <div className="mb-6">
                     <h3 className="text-2xl font-bold text-gray-900">重点词汇讲解</h3>
                     <p className="text-sm text-gray-600 mt-2">
@@ -537,12 +535,10 @@ export function IndustryReportsPage() {
                     ))}
                   </div>
                   <NavigationButtons />
-                </Card>
               </TabsContent>
 
               {/* 摘要标签页 */}
-              <TabsContent value="summary" className="flex-1 overflow-y-auto mt-4 data-[state=active]:animate-in data-[state=active]:fade-in-50">
-                <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm p-6 sm:p-8">
+              <TabsContent value="summary" className="flex-1 overflow-y-auto m-0 p-6 sm:p-8 data-[state=active]:animate-in data-[state=active]:fade-in-50">
                   <div className="mb-6">
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">撰写英文摘要</h3>
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -611,12 +607,10 @@ Example structure:
                   </div>
 
                   <NavigationButtons />
-                </Card>
               </TabsContent>
 
               {/* 讨论标签页 */}
-              <TabsContent value="discussion" className="flex-1 overflow-y-auto mt-4 data-[state=active]:animate-in data-[state=active]:fade-in-50">
-                <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm p-6 sm:p-8">
+              <TabsContent value="discussion" className="flex-1 overflow-y-auto m-0 p-6 sm:p-8 data-[state=active]:animate-in data-[state=active]:fade-in-50">
                   <h3 className="text-2xl font-bold mb-6">讨论问题</h3>
                   <div className="space-y-8">
                     {questions.map((question, index) => (
@@ -696,9 +690,9 @@ Example structure:
                     ))}
                   </div>
                   <NavigationButtons />
-                </Card>
               </TabsContent>
             </Tabs>
+            </Card>
           )}
         </div>
       </div>

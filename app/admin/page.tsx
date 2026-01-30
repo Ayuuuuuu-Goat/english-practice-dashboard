@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, Clock, Target, Users, Video, Newspaper, MessageSquare, TrendingUp, ArrowUp } from "lucide-react"
+import { ArrowLeft, Clock, Target, Users, Video, Newspaper, MessageSquare, TrendingUp, ArrowUp, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   BarChart,
@@ -92,6 +92,11 @@ export default function AdminDashboard() {
       console.error('Error checking role:', error)
       router.push('/')
     }
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('selectedRole')
+    router.push('/login')
   }
 
   const fetchAllUsersStats = async () => {
@@ -254,13 +259,13 @@ export default function AdminDashboard() {
               ))}
             </div>
             <Button
-              onClick={() => router.push('/')}
+              onClick={handleLogout}
               variant="outline"
               size="sm"
               className="gap-2"
             >
-              <ArrowLeft className="h-4 w-4" />
-              返回
+              <LogOut className="h-4 w-4" />
+              退出登录
             </Button>
           </div>
         </div>

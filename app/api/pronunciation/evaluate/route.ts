@@ -457,7 +457,7 @@ function extractScores(result: any, language: 'en' | 'zh', category: string = 'r
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { audio_url, text, language, category, user_id, word_card_id } = body
+    const { audio_url, text, language, category, user_id, word_card_id, duration } = body
 
     if (!audio_url || !text || !language || !category || !user_id || !word_card_id) {
       return NextResponse.json(
@@ -543,39 +543,41 @@ export async function POST(request: NextRequest) {
       // 即使数据库保存失败，也返回评分结果
     }
 
-    // 更新每日统计
-    if (attempt) {
-      const today = new Date().toISOString().split('T')[0]
+    // 更新每日统计 - 即使 attempt 保存失败也要更新统计
+    const today = new Date().toISOString().split('T')[0]
+    const durationSeconds = duration || 0 // 使用传入的时长，如果没有则为0
 
-      const { data: stats } = await supabase
+    const { data: stats } = await supabase
+      .from('daily_practice_stats')
+      .select('*')
+      .eq('user_id', user_id)
+      .eq('practice_date', today)
+      .single()
+
+    if (stats) {
+      const newCompletedCount = stats.completed_count + 1
+      const currentTotal = (stats.avg_total_score || 0) * stats.completed_count
+      const newAvgScore = (currentTotal + scores.total_score) / newCompletedCount
+      const newTotalDuration = (stats.total_duration_seconds || 0) + durationSeconds
+
+      await supabase
         .from('daily_practice_stats')
-        .select('*')
+        .update({
+          completed_count: newCompletedCount,
+          avg_total_score: parseFloat(newAvgScore.toFixed(2)),
+          total_duration_seconds: newTotalDuration,
+        })
         .eq('user_id', user_id)
         .eq('practice_date', today)
-        .single()
-
-      if (stats) {
-        const newCompletedCount = stats.completed_count + 1
-        const currentTotal = (stats.avg_total_score || 0) * stats.completed_count
-        const newAvgScore = (currentTotal + scores.total_score) / newCompletedCount
-
-        await supabase
-          .from('daily_practice_stats')
-          .update({
-            completed_count: newCompletedCount,
-            avg_total_score: parseFloat(newAvgScore.toFixed(2)),
-          })
-          .eq('user_id', user_id)
-          .eq('practice_date', today)
-      } else {
-        await supabase.from('daily_practice_stats').insert({
-          user_id,
-          practice_date: today,
-          target_count: 10,
-          completed_count: 1,
-          avg_total_score: scores.total_score,
-        })
-      }
+    } else {
+      await supabase.from('daily_practice_stats').insert({
+        user_id,
+        practice_date: today,
+        target_count: 10,
+        completed_count: 1,
+        avg_total_score: scores.total_score,
+        total_duration_seconds: durationSeconds,
+      })
     }
 
     return NextResponse.json({

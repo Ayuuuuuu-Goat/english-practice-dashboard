@@ -48,7 +48,8 @@ export function PronunciationPracticePage() {
       }
 
       const role = JSON.parse(selectedRole)
-      setUserId(emailToUUID(role.email)) // 将email转换为固定的UUID
+      const currentUserId = emailToUUID(role.email) // 将email转换为固定的UUID
+      setUserId(currentUserId)
 
       // 使用默认设置
       const defaultSettings = {
@@ -58,6 +59,28 @@ export function PronunciationPracticePage() {
 
       setTargetCount(defaultSettings.daily_word_count)
       setShowPhonetic(defaultSettings.show_phonetic)
+
+      // 从数据库加载今天的完成数量
+      try {
+        const supabase = createClient()
+        const today = new Date().toISOString().split('T')[0]
+
+        const { data: todayStats, error } = await supabase
+          .from('daily_practice_stats')
+          .select('completed_count')
+          .eq('user_id', currentUserId)
+          .eq('practice_date', today)
+          .single()
+
+        if (!error && todayStats) {
+          setCompletedCount(todayStats.completed_count)
+        } else {
+          setCompletedCount(0)
+        }
+      } catch (error) {
+        console.error('Error loading today stats:', error)
+        setCompletedCount(0)
+      }
 
       // 使用导入的词库数据 (200个词)
       const mockWords: WordCard[] = wordBank1.map((item, index) => ({
@@ -110,6 +133,7 @@ export function PronunciationPracticePage() {
           category: 'read_word',
           user_id: userId,
           word_card_id: currentWord.id,
+          duration: duration,
         }),
       })
 

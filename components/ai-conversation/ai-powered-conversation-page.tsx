@@ -451,44 +451,6 @@ export function AIPoweredConversationPage() {
         </p>
       </div>
 
-      {/* Stats */}
-      {stats && !selectedScenario && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="p-6 bg-gradient-to-br from-blue-50 to-blue-100/50">
-            <div className="flex items-center gap-2 mb-2">
-              <MessageSquare className="h-5 w-5 text-blue-600" />
-              <span className="text-sm text-gray-600 font-medium">总对话</span>
-            </div>
-            <p className="text-3xl font-bold text-blue-600">{stats.total_sessions}</p>
-          </Card>
-
-          <Card className="p-6 bg-gradient-to-br from-green-50 to-green-100/50">
-            <div className="flex items-center gap-2 mb-2">
-              <Target className="h-5 w-5 text-green-600" />
-              <span className="text-sm text-gray-600 font-medium">已完成</span>
-            </div>
-            <p className="text-3xl font-bold text-green-600">{stats.completed_sessions}</p>
-          </Card>
-
-          <Card className="p-6 bg-gradient-to-br from-purple-50 to-purple-100/50">
-            <div className="flex items-center gap-2 mb-2">
-              <TrendingUp className="h-5 w-5 text-purple-600" />
-              <span className="text-sm text-gray-600 font-medium">平均分</span>
-            </div>
-            <p className="text-3xl font-bold text-purple-600">
-              {stats.average_score ? stats.average_score.toFixed(0) : '0'}
-            </p>
-          </Card>
-
-          <Card className="p-6 bg-gradient-to-br from-yellow-50 to-yellow-100/50">
-            <div className="flex items-center gap-2 mb-2">
-              <Award className="h-5 w-5 text-yellow-600" />
-              <span className="text-sm text-gray-600 font-medium">最佳结局</span>
-            </div>
-            <p className="text-3xl font-bold text-yellow-600">{stats.best_outcome_count}</p>
-          </Card>
-        </div>
-      )}
 
       {/* Scenario Selection or Conversation */}
       {!selectedScenario ? (
@@ -578,36 +540,7 @@ export function AIPoweredConversationPage() {
                         : 'bg-gray-100 text-gray-900'
                     }`}
                   >
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="whitespace-pre-wrap leading-relaxed flex-1">{message.content}</p>
-                      <button
-                        onClick={() => translateMessage(idx)}
-                        disabled={message.translating}
-                        className={`flex-shrink-0 p-1 rounded hover:bg-white/20 transition-colors ${
-                          message.speaker === 'user' ? 'text-white' : 'text-gray-600'
-                        }`}
-                        title="翻译"
-                      >
-                        {message.translating ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <Languages className="h-4 w-4" />
-                        )}
-                      </button>
-                    </div>
-
-                    {/* Translation */}
-                    {message.showTranslation && message.translation && (
-                      <div className={`mt-3 pt-3 border-t ${
-                        message.speaker === 'user' ? 'border-white/30' : 'border-gray-300'
-                      }`}>
-                        <p className={`text-sm ${
-                          message.speaker === 'user' ? 'text-white/90' : 'text-gray-600'
-                        }`}>
-                          🇨🇳 {message.translation}
-                        </p>
-                      </div>
-                    )}
+                    <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
 
                     {/* Evaluation for user messages */}
                     {message.speaker === 'user' && message.evaluation && (
@@ -682,33 +615,9 @@ export function AIPoweredConversationPage() {
                       onClick={() => selectOption(option)}
                       className="w-full text-left p-4 rounded-xl border-2 border-gray-200 bg-white transition-all hover:scale-[1.02] hover:shadow-md hover:border-indigo-300"
                     >
-                      <div className="flex items-start justify-between gap-2">
-                        <p className="text-sm font-medium text-gray-900 leading-relaxed flex-1">
-                          {option.option_text}
-                        </p>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            translateOption(idx)
-                          }}
-                          disabled={option.translating}
-                          className="flex-shrink-0 p-1 rounded hover:bg-gray-100 transition-colors text-gray-600"
-                          title="翻译"
-                        >
-                          {option.translating ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <Languages className="h-4 w-4" />
-                          )}
-                        </button>
-                      </div>
-                      {option.showTranslation && option.translation && (
-                        <div className="mt-2 pt-2 border-t border-gray-200">
-                          <p className="text-xs text-gray-600">
-                            🇨🇳 {option.translation}
-                          </p>
-                        </div>
-                      )}
+                      <p className="text-sm font-medium text-gray-900 leading-relaxed">
+                        {option.option_text}
+                      </p>
                     </button>
                   </div>
                 ))}
